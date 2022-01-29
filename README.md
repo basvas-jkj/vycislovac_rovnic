@@ -1,0 +1,1 @@
+# vycislovac_rovnic
