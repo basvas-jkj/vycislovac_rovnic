@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 using static vycislovac_rovnic.CHYBA;
 
-//#error "Prvek o více než dvou písmenech způsobuje pád aplikace."
-
 namespace vycislovac_rovnic
 {
     /// <summary>
@@ -12,21 +10,6 @@ namespace vycislovac_rovnic
     /// </summary>
     class SLOUCENINA
     {
-        /// <summary>
-        ///     Seznam všech prvků a závorek této sloučeniny.
-        /// </summary>
-        public i_POLOZKA[] polozky;
-        
-        /// <summary>
-        ///     Udává počet molekul této sloučeniny v chemické rovnici.
-        /// </summary>
-        /// <remarks>
-        ///     Při vytváření sloučeniny není počet molekul znám, je
-        ///     nutné ho spočítat podle ostatních sloučenin v rovnici,
-        ///     proto je tato proměnná označena jako nullable.
-        /// </remarks>
-        public int? pocet_molekul;
-
         /// <summary>
         ///     Vytváří instanci typu sloučenina.
         /// </summary>
@@ -52,7 +35,21 @@ namespace vycislovac_rovnic
             polozky = parse(vzorec);
         }
 
-        #warning "Zde nastává chyba při parsování víceznakových prvků."
+        /// <summary>
+        ///     Seznam všech prvků a závorek této sloučeniny.
+        /// </summary>
+        public i_POLOZKA[] polozky;
+        
+        /// <summary>
+        ///     Udává počet molekul této sloučeniny v chemické rovnici.
+        /// </summary>
+        /// <remarks>
+        ///     Při vytváření sloučeniny není počet molekul znám, je
+        ///     nutné ho spočítat podle ostatních sloučenin v rovnici,
+        ///     proto je tato proměnná označena jako nullable.
+        /// </remarks>
+        public int? pocet_molekul;
+
         /// <summary>
         ///     Umožňuje převod chemického vzorce sloučeniny na pole položek.
         /// </summary>
@@ -144,26 +141,31 @@ namespace vycislovac_rovnic
         }
 
         /// <summary>
-        ///     Převede sloučeninu na její textovou reprezentaci.
+        ///     Zjišťuje, kolik atomů prvku <paramref name="p">
+        ///     tato sloučenina obsahuje.
         /// </summary>
-        /// <returns>Textovou reprezentaci sloučeniny.</returns>
-        /// <exception cref="CHYBA">
-        ///     Chyba Nulovy_pocet (č. 9): sloučenina se nemůže vyskytovat v počtu 0 molekul.
-        /// </exception>
-        public override string ToString()
+        /// <param name="p">Prvek, jehož počet se zjišťuje.</param>
+        /// <returns>Počet atomů prvku <paramref name="p">.</returns>
+        public uint pocet_atomu(PRVEK p)
         {
-            if (pocet_molekul == 0)
-            {
-                throw new CHYBA(Neplatna_rovnice);
-            }
+            uint pocet_atomu_prvku = 0;
 
-            string sloucenina = (pocet_molekul != null && pocet_molekul > 1) ? pocet_molekul.ToString() : "";
-
-            foreach (i_POLOZKA p in polozky)
+            foreach (i_POLOZKA pp in polozky)
             {
-                sloucenina += p;
+                if (pp is PRVEK ppp)
+                {
+                    if (p == ppp)
+                    {
+                        pocet_atomu_prvku += ppp.pocet;
+                    }
+                }
+                else
+                {
+                    ZAVORKA z = (ZAVORKA)pp;
+                    pocet_atomu_prvku += z.pocet * z.pocet_atomu(p);
+                }
             }
-            return sloucenina;
+            return pocet_atomu_prvku;
         }
 
         /// <summary>
@@ -190,31 +192,26 @@ namespace vycislovac_rovnic
         }
 
         /// <summary>
-        ///     Zjišťuje, kolik atomů prvku <paramref name="p">
-        ///     tato sloučenina obsahuje.
+        ///     Převede sloučeninu na její textovou reprezentaci.
         /// </summary>
-        /// <param name="p">Prvek, jehož počet se zjišťuje.</param>
-        /// <returns>Počet atomů prvku <paramref name="p">.</returns>
-        public uint pocet_atomu (PRVEK p)
+        /// <returns>Textovou reprezentaci sloučeniny.</returns>
+        /// <exception cref="CHYBA">
+        ///     Chyba Nulovy_pocet (č. 9): sloučenina se nemůže vyskytovat v počtu 0 molekul.
+        /// </exception>
+        public override string ToString()
         {
-            uint pocet_atomu_prvku = 0;
-            
-            foreach (i_POLOZKA pp in polozky)
+            if (pocet_molekul == 0)
             {
-                if (pp is PRVEK ppp)
-                {
-                    if (p == ppp)
-                    {
-                        pocet_atomu_prvku += ppp.pocet;
-                    }
-                }
-                else
-                {
-                    ZAVORKA z = (ZAVORKA) pp;
-                    pocet_atomu_prvku += z.pocet + z.pocet_atomu(p);
-                }
+                throw new CHYBA(Neplatna_rovnice);
             }
-            return pocet_atomu_prvku;
+
+            string sloucenina = (pocet_molekul != null && pocet_molekul > 1) ? pocet_molekul.ToString() : "";
+
+            foreach (i_POLOZKA p in polozky)
+            {
+                sloucenina += p;
+            }
+            return sloucenina;
         }
     }
 }

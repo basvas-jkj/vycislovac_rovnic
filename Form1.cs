@@ -35,7 +35,7 @@ namespace vycislovac_rovnic
         {
             StringWriter sw = new();
             sw.Write("Vstup má podobu chemické rovnice bez stechiometrických koeficientů. ");
-            sw.Write("Znaméneko '+' odděluje jednotlivé sloučeniny, '>' odděluje strany rovnice. ");
+            sw.Write("Znaménko '+' odděluje jednotlivé sloučeniny, '>' odděluje strany rovnice. ");
             sw.Write("Sloučenina musí být napsaná bez mezer, nikde jinde na mezerách nezáleží. ");
             sw.Write("Značka prvku musí začínat velkým písmenem a může mít maximáně dvě písmena. ");
 
@@ -52,21 +52,10 @@ namespace vycislovac_rovnic
         {
             StringWriter sw = new();
             sw.Write("Program neumí vyčíslit sloučeniny, ve kterých je počet sloučenin na obou stranách rovnice jiný než právě o jedna vyšší než počet prvků. ");
-            sw.Write("Problém je také se sloučeninami se závorkami. ");
-            sw.Write("Sloučenina musí být napsaná bez mezer, nikde jinde na mezerách nezáleží. ");
+            sw.Write("Závorky jsou ve vzorcích povoleny, ale pouze kulaté a nelze je zanořovat. Není proto možné vyčíslovat reakce s komplexními sloučeninami.");
             sw.Write("Program neumí zpracovat prvky, jejichž značka je delší než dvě písmena. ");
 
             MessageBox.Show(sw.ToString(), "nápověda", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            TEST.testuj(textBox1, label1);
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //System.Diagnostics.Process.Start("../../../github.lnk");
         }
     }
 }

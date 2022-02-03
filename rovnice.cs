@@ -4,7 +4,6 @@ using System.Linq;
 using static System.Math;
 using static vycislovac_rovnic.CHYBA;
 
-//#error "V tomto souboru nebylo zkontrolováno, zda jsou všude správně zapsány výjimky."
 namespace vycislovac_rovnic
 {
     /// <summary>
@@ -12,24 +11,6 @@ namespace vycislovac_rovnic
     /// </summary>
     public class ROVNICE
     {
-        /// <summary>
-        ///     Ukládá chemické sloučeniny, které do reakce vstupují jako reaktanty.
-        /// </summary>
-        private readonly SLOUCENINA[] reaktanty;
-        
-        /// <summary>
-        ///     Ukládá chemické sloučeniny, které z reakce vystupují jako proddukty.    
-        /// </summary>
-        private readonly SLOUCENINA[] produkty;
-
-        /// <summary>
-        ///     Ukládá matici, která představuje rozložení prvků sloučenině.
-        /// </summary>
-        /// <remarks>
-        ///     Více o struktuře a významu této matice viz dokumentace.
-        /// </remarks>
-        private MATICE rovnicova_matice = null;
-
         /// <summary>
         ///     Vytvoří instanci typu ROVNICE na základě textové podoby
         ///     podle parametru <paramref name="rovnice">.
@@ -40,7 +21,7 @@ namespace vycislovac_rovnic
         ///     Chyba Malo_sloucenin (č. 5): alespoň jedna strana rovnice neobsahuje ani jednu sloučeninu.
         ///     Chyba Prazdna_sloucenina (č. 7): <paramref name="rovnice"> obsahuje dvě + za sebou.
         /// </exception>
-        public ROVNICE (string rovnice)
+        public ROVNICE(string rovnice)
         {
             rovnicova_matice = null;
             string[] strany_rovnice = rovnice.Split('>');
@@ -51,7 +32,7 @@ namespace vycislovac_rovnic
 
             string[] leva_strana = strany_rovnice[0].Split('+', StringSplitOptions.TrimEntries);
             string[] prava_strana = strany_rovnice[1].Split('+', StringSplitOptions.TrimEntries);
-            
+
             reaktanty = new SLOUCENINA[leva_strana.Length];
             produkty = new SLOUCENINA[prava_strana.Length];
 
@@ -75,31 +56,22 @@ namespace vycislovac_rovnic
         }
 
         /// <summary>
-        ///     Převede chemickou rovnici na její textovou reprezentaci.
+        ///     Ukládá chemické sloučeniny, které do reakce vstupují jako reaktanty.
         /// </summary>
-        /// <returns>Textovou reprezentaci chemické rovnice.</returns>
-        /// <exception cref="CHYBA">
-        ///     Chyba Nulovy_pocet (č. 9): některá sloučenina se vyskytuje v počtu 0 molekul.
-        /// </exception>
-        public override string ToString()
-        {
-            string r = null;
-            foreach (SLOUCENINA s in reaktanty)
-            {
-                r += s + " + ";
-            }
+        private readonly SLOUCENINA[] reaktanty;
+        
+        /// <summary>
+        ///     Ukládá chemické sloučeniny, které z reakce vystupují jako proddukty.    
+        /// </summary>
+        private readonly SLOUCENINA[] produkty;
 
-            r = r.Remove(r.Length - 2);
-            r += "> ";
-
-            foreach (SLOUCENINA s in produkty)
-            {
-                r += s + " + ";
-            }
-
-            r = r.Remove(r.Length - 2);
-            return r;
-        }
+        /// <summary>
+        ///     Ukládá matici, která představuje rozložení prvků sloučenině.
+        /// </summary>
+        /// <remarks>
+        ///     Více o struktuře a významu této matice viz dokumentace.
+        /// </remarks>
+        private MATICE rovnicova_matice = null;
 
         /// <summary>
         ///     Vytvoří matici chemické rovnice, kterou uloží do proměnné rovnicova_matice.
@@ -149,15 +121,15 @@ namespace vycislovac_rovnic
             {
                 throw new CHYBA(Nevyplnena_matice);
             }
-            int fa;
-            int fb;
+            uint fa;
+            uint fb;
             for (fa = 0; fa < reaktanty.Length; fa++)
             {
                 reaktanty[fa].pocet_molekul = Abs(rovnicova_matice[fa, rovnicova_matice.pocet_sloupcu - 1]);
             }
             for (fb = 0; fb < produkty.Length; fb++)
             {
-                if (fa + fb < rovnicova_matice.pocet_radku)
+                if (fa + fb < rovnicova_matice.pocet_nenulovych_radku())
                 {
                     produkty[fb].pocet_molekul = Abs(rovnicova_matice[fa + fb, rovnicova_matice.pocet_sloupcu - 1]);
                 }
@@ -168,7 +140,6 @@ namespace vycislovac_rovnic
             }
         }
 
-        #warning "Tato funkce vyhazuje chyby číslo 3: neočekávaná situace!!!"
         /// <summary>
         ///     Provede vyčíslení chemické rovnice.
         /// </summary>
@@ -180,12 +151,39 @@ namespace vycislovac_rovnic
             ziskej_matici_rovnice();
             rovnicova_matice.eliminuj();
 
-            if (rovnicova_matice.pocet_sloupcu > rovnicova_matice.pocet_radku + 1)
+            if (rovnicova_matice.pocet_sloupcu > rovnicova_matice.pocet_nenulovych_radku() + 1)
             {
                 throw new CHYBA(Neocekavana_situace);
             }
 
             preved_matici_na_rovnici();
+        }
+
+        /// <summary>
+        ///     Převede chemickou rovnici na její textovou reprezentaci.
+        /// </summary>
+        /// <returns>Textovou reprezentaci chemické rovnice.</returns>
+        /// <exception cref="CHYBA">
+        ///     Chyba Nulovy_pocet (č. 9): některá sloučenina se vyskytuje v počtu 0 molekul.
+        /// </exception>
+        public override string ToString()
+        {
+            string r = null;
+            foreach (SLOUCENINA s in reaktanty)
+            {
+                r += s + " + ";
+            }
+
+            r = r.Remove(r.Length - 2);
+            r += "> ";
+
+            foreach (SLOUCENINA s in produkty)
+            {
+                r += s + " + ";
+            }
+
+            r = r.Remove(r.Length - 2);
+            return r;
         }
     }
 }

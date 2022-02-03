@@ -1,4 +1,6 @@
-﻿using static System.Math;
+﻿using System.Linq;
+
+using static System.Math;
 using static vycislovac_rovnic.CHYBA;
 
 namespace vycislovac_rovnic
@@ -40,8 +42,8 @@ namespace vycislovac_rovnic
             {
                 throw new CHYBA(Prazdna_matice);
             }
-            pocet_radku = zdroj.GetLength(0);
-            pocet_sloupcu = zdroj.GetLength(1);
+            pocet_radku = (uint) zdroj.GetLength(0);
+            pocet_sloupcu = (uint) zdroj.GetLength(1);
             matice = (int[,])zdroj.Clone();
         }
 
@@ -59,8 +61,8 @@ namespace vycislovac_rovnic
             {
                 throw new CHYBA(Prazdna_matice);
             }
-            this.pocet_radku = pocet_radku;
-            this.pocet_sloupcu = pocet_sloupcu;
+            this.pocet_radku = (uint) pocet_radku;
+            this.pocet_sloupcu = (uint) pocet_sloupcu;
             matice = new int[pocet_radku, pocet_sloupcu];
         }
 
@@ -71,12 +73,12 @@ namespace vycislovac_rovnic
         /// <summary>
         ///     Vrací počet řádků matice.
         /// </summary>
-        public int pocet_radku {get;}
+        public uint pocet_radku {get;}
 
         /// <summary>
         ///     Vrací počet sloupců matice.
         /// </summary>
-        public int pocet_sloupcu {get;}
+        public uint pocet_sloupcu {get;}
         
         /// <summary>
         ///     Uchovává hodnoty všech prvků matice.
@@ -91,7 +93,7 @@ namespace vycislovac_rovnic
         /// <exception cref="CHYBA">
         ///     Chyba Prilis_vysoky_index (č. 1): prvek s tak vysokými souřadnicemi není v této matici obsažen.
         /// </exception>
-        public int this[int radek, int sloupec]
+        public int this[uint radek, uint sloupec]
         {
             get
             {
@@ -101,6 +103,28 @@ namespace vycislovac_rovnic
                 }
                 return matice[radek, sloupec];
             }
+        }
+
+        /// <summary>
+        ///     Zjišťuje, kolik nenulových řádků matice obsahuje.
+        /// </summary>
+        /// <remarks>
+        ///     V případě, že je matice již eliminovaná, je vrácená hodnota zároveň hodností matice.
+        /// </remarks>
+        /// <returns>počet nenulových řádků matice</returns>
+        public uint pocet_nenulovych_radku()
+        {
+            for (uint fa = pocet_radku - 1; fa >= 0; fa--)
+            {
+                for (int fb = 0; fb < pocet_sloupcu; fb++)
+                {
+                    if (matice[fa,fb] != 0)
+                    {
+                        return fa + 1;
+                    }
+                }
+            }
+            return 0;
         }
 
         //  -------------------------
@@ -373,7 +397,6 @@ namespace vycislovac_rovnic
             }
         }
 
-        #warning "Tato funkce vyhazuje chyby číslo 3: neočekávaná situace!!!"
         /// <summary>
         ///     Provede eliminaci matice na diagonální tvar.
         /// </summary>
@@ -403,21 +426,20 @@ namespace vycislovac_rovnic
             }
             // zbytek kódu má za úkol rozšířit prvky matice podle hlavní diagonály 
             int nasobek_diagonaly = n(vrat_hlavni_diagonalu());
-            for (uint f = 0; f < pocet_radku && f < pocet_sloupcu; f += 1)
+            for (uint f = 0; f < pocet_nenulovych_radku() && f < pocet_sloupcu; f += 1)
             {
                 if (matice[f, f] == 0) 
                 {
-                    //continue;
-                    throw new CHYBA(Neocekavana_situace); // Tento řádek může působit problémy.
+                    throw new CHYBA(Neocekavana_situace);
                 }
                 int koeficient = nasobek_diagonaly / matice[f, f];
                 rozsir_radek(f, koeficient);
             }
         }
 
-        //  ----------------------------------
-        //  |       operace s maticemi       |
-        //  ----------------------------------
+        //  -------------------------------
+        //  |       součásti matice       |
+        //  -------------------------------
 
         /// <summary>
         ///     Umožňuje získat prvky jednoho řádku matice.
@@ -471,7 +493,7 @@ namespace vycislovac_rovnic
         /// <returns>Pole s hodnotami prvků hlavní diahonály.</returns>
         private int[] vrat_hlavni_diagonalu()
         {
-            int delka_diagonaly = Min(pocet_radku, pocet_sloupcu);
+            uint delka_diagonaly = Min(pocet_radku, pocet_sloupcu);
             int[] diagonala = new int[delka_diagonaly];
 
             for (int f = 0; f < delka_diagonaly; f += 1)
@@ -480,54 +502,5 @@ namespace vycislovac_rovnic
             }
             return diagonala;
         }
-
-        //  --------------------------------
-        //  |       testovací funkce       |
-        //  --------------------------------
-        /*public override string ToString()
-        {
-            StringWriter prevedeni = new();
-            //string prevedeni = "";
-            for (int fa = 0; fa < pocet_radku; fa += 1)
-            {
-                for (int fb = 0; fb < pocet_sloupcu; fb += 1)
-                {
-                    prevedeni.Write(matice[fa, fb] + " ");
-                }
-                prevedeni.WriteLine();
-            }
-            return prevedeni.ToString();
-        }
-        public string Radek(uint cislo_radku)
-        {
-            int[] radek = vrat_radek(cislo_radku);
-            StringWriter prevedeni = new();
-            foreach (int prvek in radek)
-            {
-                prevedeni.Write(prvek + " ");
-            }
-            return prevedeni.ToString();
-        }
-        public string Sloupec(uint cislo_sloupce)
-        {
-            int[] radek = vrat_sloupec(cislo_sloupce);
-            StringWriter prevedeni = new();
-            foreach (int prvek in radek)
-            {
-                prevedeni.WriteLine(prvek);
-            }
-            return prevedeni.ToString();
-        }
-        public string Diagonala()
-        {
-            int[] diagonala = vrat_hlavni_diagonalu();
-            StringWriter prevedeni = new();
-            for (int f = 0; f < diagonala.Length; f += 1)
-            {
-                string odsazeni = new(' ', 4 * f);
-                prevedeni.WriteLine(odsazeni + diagonala[f]);
-            }
-            return prevedeni.ToString();
-        }*/
     }
 }

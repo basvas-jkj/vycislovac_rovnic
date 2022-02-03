@@ -25,6 +25,25 @@ namespace vycislovac_rovnic
     struct PRVEK: i_POLOZKA
     {
         /// <summary>
+        ///     Vytvoří instanci prvku.
+        /// </summary>
+        /// <param name="znacka">Chemická značka prvku.</param>
+        /// <param name="pocet">Počet atomů prvku ve sloučenině.</param>
+        /// <exception cref="CHYBA">
+        ///     Chyba Nulovy_pocet (č. 9): parametr <paramref name="pocet"> nabývá hodnoty 0.
+        /// </exception>
+        public PRVEK(string znacka, uint pocet)
+        {
+            if (pocet == 0)
+            {
+                throw new CHYBA(Nulovy_pocet);
+            }
+
+            this.znacka = znacka;
+            this.pocet = pocet;
+        }
+
+        /// <summary>
         ///     Představuje chemickou značku prvku.
         /// </summary>
         /// <remarks>
@@ -36,25 +55,6 @@ namespace vycislovac_rovnic
         ///     Představuje počet atomů tohoto prvku ve sloučenině.
         /// </summary>
         public readonly uint pocet;
-
-        /// <summary>
-        ///     Vytvoří instanci prvku.
-        /// </summary>
-        /// <param name="znacka">Chemická značka prvku.</param>
-        /// <param name="pocet">Počet atomů prvku ve sloučenině.</param>
-        /// <exception cref="CHYBA">
-        ///     Chyba Nulovy_pocet (č. 9): parametr <paramref name="pocet"> nabývá hodnoty 0.
-        /// </exception>
-        public PRVEK (string znacka, uint pocet)
-        {
-            if (pocet == 0)
-            {
-                throw new CHYBA(Nulovy_pocet);
-            }
-
-            this.znacka = znacka;
-            this.pocet = pocet;
-        }
 
         /// <summary>
         ///     Převede prvek na jeho textovou reprezentaci.
@@ -101,24 +101,6 @@ namespace vycislovac_rovnic
     struct ZAVORKA: i_POLOZKA
     {
         /// <summary>
-        ///     Určuje typ závorky.
-        /// </summary>
-        /// <remarks>
-        ///     1 - kulaté, 2 - hranaté, 3 - složené (zatím fungují pouze kulaté závorky)
-        /// </remarks>
-        public readonly int typ_zavorky;
-        
-        /// <summary>
-        ///     Seznam všech prvků (případně vniřních závorek) této závorky.
-        /// </summary>
-        public readonly i_POLOZKA[] polozky;
-
-        /// <summary>
-        ///     Představuje počet těchto závorek ve sloučenině.
-        /// </summary>
-        public readonly uint pocet;
-
-        /// <summary>
         ///     Vytvoří instanci závorky.
         /// </summary>
         /// <param name="polozky">Seznam prvků (případně závorek) tvořících tupo závorku.</param>
@@ -127,7 +109,7 @@ namespace vycislovac_rovnic
         ///     Chyba Nulovy_pocet (č. 9): parametr <paramref name="pocet"> nabývá hodnoty 0.
         ///     Chyba Prazdna_zavorka (č. 10): pole <paramref name="pocet"> nabývá hodnoty null nebo má nulovou délku.
         /// </exception>
-        public ZAVORKA (i_POLOZKA[] polozky, uint pocet)
+        public ZAVORKA(i_POLOZKA[] polozky, uint pocet)
         {
             if (pocet == 0)
             {
@@ -144,25 +126,22 @@ namespace vycislovac_rovnic
         }
 
         /// <summary>
-        ///     Převede závorku na její textovou reprezentaci.
+        ///     Seznam všech prvků (případně vniřních závorek) této závorky.
         /// </summary>
-        /// <returns>Textovou reprezentaci závorky.</returns>
-        public override string ToString()
-        {
-            string zapis = "(";
-            foreach (i_POLOZKA p in polozky)
-            {
-                zapis += p;
-            }
-            if (pocet == 1)
-            {
-                return zapis + ")";
-            }
-            else
-            {
-                return zapis + ")" + pocet;
-            }
-        }
+        public readonly i_POLOZKA[] polozky;
+
+        /// <summary>
+        ///     Představuje počet těchto závorek ve sloučenině.
+        /// </summary>
+        public readonly uint pocet;
+
+        /// <summary>
+        ///     Určuje typ závorky.
+        /// </summary>
+        /// <remarks>
+        ///     1 - kulaté, 2 - hranaté, 3 - složené (zatím fungují pouze kulaté závorky)
+        /// </remarks>
+        public readonly int typ_zavorky;
 
         /// <summary>
         ///     Zjišťuje, kolik atomů prvku <paramref name="p">
@@ -207,6 +186,27 @@ namespace vycislovac_rovnic
                         yield return pb;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Převede závorku na její textovou reprezentaci.
+        /// </summary>
+        /// <returns>Textovou reprezentaci závorky.</returns>
+        public override string ToString()
+        {
+            string zapis = "(";
+            foreach (i_POLOZKA p in polozky)
+            {
+                zapis += p;
+            }
+            if (pocet == 1)
+            {
+                return zapis + ")";
+            }
+            else
+            {
+                return zapis + ")" + pocet;
             }
         }
     }
