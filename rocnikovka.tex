@@ -69,7 +69,7 @@ Protože se v těchto rovnicích nevyskytují absolutní členy (resp. jejich ho
 uspořádaná n-tice $ [a_1, a_2, \cdots, a_n] $, je řešením i $ [ka_1, ka_2, \cdots, ka_n], k \in \mathbb{N} $. To je možné dokázat pomocí substituce $ \forall i \leq n \wedge i \in \mathbb{N}: b_i = ka_i, k \in \mathbb{N} $. Po dosazení do soustavy a vynásobení všech rovnic číslem k získáme stejnou rovnici jako napočátku, ale místo kořenů $ a_i $ zaujímají kořeny $ b_i $, přičemž $ a_i \neq b_i $ Jako stechiometrické koeficienty se proto použije taková n-tice, jejíž členy jsou vzájemně nesoudělná přirozená čísla.
 
 
-\subsection{Příklad}
+\subsection*{Příklad}
 Při vyčíslení chemické rovnice $ \n{P}_4\n{O}_{10} + \n{H}_2\n{O} \sipka \n{H}_3\n{PO}_4 $ lze postupovat následovně:
 
 Nejprve do rovnice doplníme neznámé na místo stechiometrických koeficientů:
@@ -85,7 +85,7 @@ Chemickou rovnici je možné rozdělit na soustavu lineárních rovnic, jejichž
 Řešením je každá uspořádaná trojice $ [a, 6a, 4a], a\in \mathbb{N} $. Tato trojice je nesoudělná, pokud $ a = 1 $. Tudíž $ [a,b,c] = [1,6,4] $. Chemická rovnice tak bude mít podobu:
 $$ \n{P}_4\n{O}_{10} + 6~\n{H}_2\n{O} \sipka 4~\n{H}_3\n{PO}_4 $$
 
-\subsection{Kontrola platnosti chemické rovnice}
+\section{Kontrola platnosti chemické rovnice}
 Obecně je velice těžké posoudit, zda rovnice znázorňuje reálnou chemickou reakci. Přesto existuje jednoduchý způsob, jak některé rovnice snadno vyloučit. Jsou to ty, ve kterých není možné zajistit platnost zákona zachování hmoty. To se projeví tím, že stechiometrický koeficient alespoň jedné sloučeniny vyjde rovný 0.
 
 Příklad:
@@ -102,8 +102,9 @@ $$2~\n{Na} + 2~\n{H}_2\n{O} \sipka 2~\n{NaOH}+1~\n{H}_2 + 0~\n{Fe}$$
 Taková rovnice však nedává smysl. Můžeme ji proto vyloučit čistě na základě jejího vyčíslení. Toto je jediná kontrola, kterou můj program provádí.
 
 \chapter{Řešení soustav lineárních rovnic pomocí matic}
-Jako postup pro řešení soustavy popsané v předchozí kapitole jsem se rozhodl použít matici, kterou převedu pomocí elementárních úprav na specifický tvar, který je popsaný v Příloze 1 (\ref{P1}).
+Jako postup pro řešení soustavy popsané v předchozí kapitole jsem se rozhodl použít matici, kterou převedu pomocí elementárních úprav na specifický tvar, který je popsaný v další části této kapitoly.
 
+\section{Vyjádření chemické rovnice maticí}
 Mějme obecnou chemickou rovnici:
 $$a_1~\n{A}_1 + a_2~\n{A}_2 + ... + a_m~\n{A}_m \sipka b_1~\n{B}_1 + b_2~\n{B}_2 + ...+ b_n~\n{B}_n,$$
 kde $\n{A}_1, \n{A}_2, ..., \n{A}_m, \n{B}_1, \n{B}_2, ..., \n{B}_n$ jsou různé chemické sloučeniny. Lze ji převést na soustavu lineárních rovnic:
@@ -113,14 +114,42 @@ kde $\n{A}_1, \n{A}_2, ..., \n{A}_m, \n{B}_1, \n{B}_2, ..., \n{B}_n$ jsou různ�
 	c_{31}a_{1} + c_{32}a_{2} + \cdots + c_{3m}a_{m} &= d_{31}b_{1} + d_{32}b_{2} + \cdots + d_{3n}b_{n}\\
 	&~...
 \end{align*}
-Koeficient $ c_{ij} $ vyjadřuje počet atomů $ i $-tého prvku ve sloučenině A$ _j $ a $ d_{ij} $ vyjadřuje počet atomů $ i $-tého prvku ve sloučenině B$ _j $. Po převedení pravých stran rovnic na levé je možné k soustavě vytvořit její matici, která má podobu:
-$$\begin{pmatrix}
-	c_{11} & c_{12} & \cdots & c_{1m} & -d_{11} & -d_{12} &\cdots& -d_{1n}\\
-	c_{21} & c_{22} & \cdots & c_{2m} & -d_{21} & -d_{22} &\cdots& -d_{2n}\\
-	c_{31} & c_{32} & \cdots & c_{3m} & -d_{31} & -d_{32} &\cdots& -d_{3n}\\
-	\cdots
+Koeficient $ c_{ij} $ vyjadřuje počet atomů $ i $-tého prvku ve sloučenině A$ _j $ a $ d_{ij} $ vyjadřuje počet atomů $ i $-tého prvku ve sloučenině B$ _j $.
+
+Po převedení pravých stran rovnic na levé je možné k soustavě vytvořit její matici, která má podobu:
+$$\mathbb{A} = \begin{pmatrix}
+	c_{11} & c_{12} & \cdots & c_{1m} & -d_{11} & -d_{12} & \cdots & -d_{1n}\\
+	c_{21} & c_{22} & \cdots & c_{2m} & -d_{21} & -d_{22} & \cdots & -d_{2n}\\
+	c_{31} & c_{32} & \cdots & c_{3m} & -d_{31} & -d_{32} & \cdots & -d_{3n}\\
+    \vdots & \vdots & \vdots & \vdots & \vdots  & \vdots  & \ddots & \vdots 
+\end{pmatrix}$$
+Rozšířená matice soustavy je potom:
+$$\mathbb{A}|b = \begin{pmatrix}
+	c_{11} & c_{12} & \cdots & c_{1m} & -d_{11} & -d_{12} & \cdots & -d_{1n} & \vline & 0\\
+	c_{21} & c_{22} & \cdots & c_{2m} & -d_{21} & -d_{22} & \cdots & -d_{2n} & \vline & 0\\
+	c_{31} & c_{32} & \cdots & c_{3m} & -d_{31} & -d_{32} & \cdots & -d_{3n} & \vline & 0\\
+    \vdots & \vdots & \vdots & \vdots & \vdots  & \vdots  & \ddots &  \vdots & \vline & \vdots
 \end{pmatrix}$$
 
+Protože na pravé starně všech rovnic je 0, nebudu dále pravou stranu v matici uvažovat, tj. pracovat budu pouze s maticí $ \mathbb{A} $.
+
+\section{Zpracování matice}
+Pro úpravu matice použiji všechny řádkové úpravy uvedené ve zdroji \cite{czu}, tedy prohození dvou řádků, vynásobení řádku nenulovým číslem, přičtení jednoho řádku k jinému a vynechání nulového řádku. Poslední jmenovanou úpravu zdroj nepovažuje za elementární, protože se při ní nezachovává typ matice, pro účely této práce však bude vhodné ji taktéž použít.
+
+Cílem úprav je matice ve tvaru
+$$\mathbb{A} = \begin{pmatrix}
+	k & 0 & 0 & 0 & \cdots & 0 & l \\
+	0 & k & 0 & 0 & \cdots & 0 & m \\
+	0 & 0 & k & 0 & \cdots & 0 & n \\
+    \vdots&\vdots&\vdots&\vdots&\ddots&\vdots&\vdots \\
+	0 & 0 & 0 & 0 & \cdots & k & z \\
+\end{pmatrix}$$
+kde $ k \in \mathbb{N} $ a $l,m,n,\ldots,z \in \mathbb{Z}^- $. Počet sloupců matice nadále odpovídá počtu sloučenin a je o jedna vyšší než počet řádků (ten se mohl snížit vzhledem k odstraňování nulových řádků a nemusí tak odpovídat počtu prvků).
+
+\section{Získání stechiometrických koeficientů}
+V případě, že se podaří matici upravit do tvaru popsaného v předchozí části, lze již tvrdit, že chemická rovnice bude vždy vyčíslitelná. Zároveň je také možné přímo získat nejjednodušší možný výsledek tvořený nesoudělnými stechiometrickými koeficienty.
+
+V případě, že se nepodaří upravit matici do tohoto tvaru, mohou nastat dvě možnosti. Je-li počet sloupců roven počtu řádků, pak alespoň jeden z kořenů soustavy má nulovou hodnotu. Chemická rovnice je potom neplatná. Pokud je počet sloupců vyšší než počet řádků o více než jedna, pak by bylo nutné provést další kroky ke zjištění, zda existuje platné řešení a jakou má podobu. Můj program však tento postup neobsahuje a proto se jím nebudu zabývat.
 
 \chapter{Závěr}
 Vytvořil jsem program, jehož cílem je vyčíslovat chemické rovnice. Vysvětlil jsem, co to je a jakým způsobem ji lze vyčíslit. Základem aplikace je algoritmus pro řešení soustav lineárních matic, jehož popis je hlavní součástí této ročníkové práce. Jedná se o můj vlastní návrh, který je vhodný pouze pro tento účel -- pro obecné řešní soustav rovnic se nehodí. Na závěr jsem také ukázal, jakým způsobem se program používá a jakou podobu má mít vstup. Součástí této práce je také příloha s několika ukázkovými vstupy a příslušnými výstupy.

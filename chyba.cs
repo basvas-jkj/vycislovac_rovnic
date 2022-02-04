@@ -145,11 +145,11 @@ namespace vycislovac_rovnic
             prehled_chyb = new string[11];
             prehled_chyb[0] = "Nelze vytvořit prázdnou matici.";
             prehled_chyb[1] = "Příliš vysoký index - matice tento prvek (řádek, sloupec) neobsahuje.";
-            prehled_chyb[2] = "Parametry této funkce musí být kladné.";
-            prehled_chyb[3] = "Nutno vyšetřit, zda v tomto případě jde o chyby, či nikoli.";
-            prehled_chyb[4] = "Strana musí mít levou a pravou stranu - právě jedno známénko >.";
-            prehled_chyb[5] = "Lze použít pouze písmena, číslice a závorky.";
-            prehled_chyb[6] = "V rovnici chybí alespoň jedna sloučenina.";
+            prehled_chyb[2] = "Argumenty této funkce musí být kladné.";
+            prehled_chyb[3] = "Rovnici se nepodařilo vyčíslit.";
+            prehled_chyb[4] = "Rovnice musí mít právě jedno známénko >, které odděluje levou a pravou stranu.";
+            prehled_chyb[5] = "Neplatný vstup - ";
+            prehled_chyb[6] = "Rovnice musí obsahovat alespoň jednu sloučeninu.";
             prehled_chyb[7] = "Je nutné vyplnit matice chemické rovnice (funkce 'preved_matici_na_rovnici()').";
             prehled_chyb[8] = "Tuto rovnici nelze vyčíslit.";
             prehled_chyb[9] = "Není možné vytvořit nulový počet sloučeniny, prvků nebo položek.";
