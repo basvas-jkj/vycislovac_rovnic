@@ -39,7 +39,7 @@ namespace vycislovac_rovnic
             sw.Write("Vstup má podobu chemické rovnice bez stechiometrických koeficientů. ");
             sw.Write("Znaménko '+' odděluje jednotlivé sloučeniny, '>' odděluje strany rovnice. ");
             sw.Write("Sloučenina musí být napsaná bez mezer, nikde jinde na mezerách nezáleží. ");
-            sw.Write("Značka prvku musí začínat velkým písmenem a může mít maximáně dvě písmena. ");
+            sw.Write("Značka prvku musí začínat velkým písmenem a může mít maximáně dvě písmena, nemusí však odpovídat existujícímu prvku. ");
 
             MessageBox.Show(this, sw.ToString(), "nápověda", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }

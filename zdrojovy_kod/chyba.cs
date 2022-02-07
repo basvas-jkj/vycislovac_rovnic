@@ -146,7 +146,7 @@ namespace vycislovac_rovnic
             prehled_chyb[1] = "Příliš vysoký index - matice tento prvek (řádek, sloupec) neobsahuje.";
             prehled_chyb[2] = "Argumenty této funkce musí být kladné.";
             prehled_chyb[3] = "Rovnici se nepodařilo vyčíslit.";
-            prehled_chyb[4] = "Rovnice musí mít právě jedno známénko >, které odděluje levou a pravou stranu.";
+            prehled_chyb[4] = "Rovnice musí mít právě jedno známénko >.";
             prehled_chyb[5] = "Neplatný vstup.";
             prehled_chyb[6] = "Chybně zadaná sloučenina.";
             prehled_chyb[7] = "Je nutné vyplnit matice chemické rovnice (funkce 'preved_matici_na_rovnici()').";
